@@ -1,5 +1,5 @@
 import sys
-
+#colors for the text
 colors = {'black': '30;',
     'red': '31;',
     'green': '32;',
@@ -17,7 +17,7 @@ colors = {'black': '30;',
     '36;': 'cyan',
     '37;': 'white'
 }
-
+#colors for the background
 back_colors = {'black': '40m',
     'red': '41m',
     'green': '42m',
@@ -35,7 +35,7 @@ back_colors = {'black': '40m',
     '46m': 'cyan',
     '47m': 'white'
 }
-
+#text option codes
 text_options = {
     'bold': '1;',
     'italic': '3;',
@@ -46,7 +46,7 @@ text_options = {
 
 def cprint(*args, **kwargs):
     '''
-    Stand alone function for printing in color and the like
+    Stand alone function for printing in color
     '''
     colo = '' if kwargs.get('color') == None else colors[kwargs['color']]
     bkgnd = '40m' if kwargs.get('background') == None else back_colors[kwargs['background']]
@@ -67,7 +67,7 @@ def cprint(*args, **kwargs):
     
 class cprinter:
     '''
-    print stream object
+    print stream object with color options
     '''
     
     def __init__(self, **kwargs):
@@ -93,7 +93,10 @@ class cprinter:
     
 
     def _update_style(self):
-        
+        '''
+        update the style escape string for printing
+        '''
+        #if no special text options are chosen
         if not any(self._text_opts.values()):
             self._style = '0;'
         else:
@@ -103,7 +106,9 @@ class cprinter:
         
 
     def print(self, *args, **kwargs):
-        
+        '''
+        print with all currently set options
+        '''
         stream = kwargs.get('stream', self.stream)
         end = kwargs.get('end', self.end)
         sep = kwargs.get('sep', self.sep)
@@ -111,12 +116,15 @@ class cprinter:
         print(f'\033[{self._style}{sep.join(args)}\033[0;40m', file = stream, end = end)
 
     def __lshift__(self, arg):
-    
+        '''
+        for those you who really like C++ but really don't want to code in it
+        by default this doesn't print out the end string to make it more consistent with
+        C++ style output.
+        '''
         print(f'\033[{self._style}{str(arg)}\033[0;40m', file = self.stream, end = '')
         return self
     
-    #TODO add in setter and getter for color, bold, underline, italic, blink, backgound, style.
-
+    
     @property
     def color(self):
         return colors[self._color]
